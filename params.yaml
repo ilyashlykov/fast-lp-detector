@@ -1,0 +1,11 @@
+paths:
+ model_resnet: '/Users/ilyashlykov/Downloads/model_resnet.tflite'
+ model_nomer: '/Users/ilyashlykov/Downloads/model1_nomer.tflite'
+image_size:
+  width: 128
+  height: 64
+Levenstein_const:
+ levenstein_error: 3
+ levenstein_missed: 5
+hough: False
+
