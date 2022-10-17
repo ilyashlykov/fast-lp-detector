@@ -1,0 +1,13 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python test_speed_and_accuracy.py --path /Users/ilyashlykov/Documents/dataset
+      --metrics ./
+    deps:
+    - path: test_speed_and_accuracy.py
+      md5: 4594ab8f71555d4624dcc2934b6bb6f4
+      size: 8078
+    outs:
+    - path: metrics.json
+      md5: 5013b15e96ad9164697b33dc593429a9
+      size: 179

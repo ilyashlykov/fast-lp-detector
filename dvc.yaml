@@ -1,0 +1,8 @@
+stages:
+  prepare:
+    cmd: python test_speed_and_accuracy.py --path /Users/ilyashlykov/Documents/dataset
+      --metrics ./
+    deps:
+    - test_speed_and_accuracy.py
+    metrics:
+    - metrics.json
