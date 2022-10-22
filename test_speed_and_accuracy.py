@@ -36,7 +36,7 @@ NUMBER_HEIGHT = params['image_size']['height']
 HOUGH_TRANSFORM = params['hough']
 model_resnet_path = params['paths']['model_resnet']
 model_nomer_paths = params['paths']['model_nomer']
-
+letters = params['letters']
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-M', '--metrics', type=str, help='path to the file with metrics')
@@ -65,9 +65,6 @@ def levenstein(str_1, str_2):
     return D[-1][-1]
 
 
-letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'а', 'в', 'с', 'е', 'н', 'к', 'м', 'о', 'р', 'т', 'х', 'у']
-
-
 # Функция для чтения изображения из json файла
 def read_img_from_json(path):
     filelist = os.listdir(path)
@@ -76,15 +73,15 @@ def read_img_from_json(path):
         if item.endswith(('json')):
             all_img.append(item)
             src = os.path.join(os.path.abspath(path), item)
-            file = open(src)
-            f = json.load(file)['shapes']
+            with open(src) as file:
+                f = json.load(file)['shapes']
             number.append(''.join([i['label'] for i in f]))
     return all_img, number
 
 def convert_img(path,img_name):
     src = os.path.join(os.path.abspath(path), img_name)
-    file = open(src)
-    return img_b64_to_arr(json.load(file)['imageData'])
+    with open(src) as file:
+        return img_b64_to_arr(json.load(file)['imageData'])
 
 def decode_batch(out):
     ret = []
@@ -195,7 +192,7 @@ precision = true_positive / sum([len(i[0]) for i in result.values()])
 recall = true_positive / sum([len(i) for i in result.keys()])
 ocr_total = len(number)
 ocr_error = sum([ int(levenstein(i[0], i[1][0]) >= LEVENSTEIN_TRESHOLD_ERROR) for i in result.items()])
-ocr_missed = sum([ int(levenstein(i[0], i[1][0]) == LEVENSTEIN_TRESHOLD_MISSED) for i in result.items()])
+ocr_missed = sum([ int(levenstein(i[0], i[1][0]) >= LEVENSTEIN_TRESHOLD_MISSED) for i in result.items()])
 ocr_miss_rate = ocr_missed / ocr_total
 ocr_normal = 1 - (ocr_missed + ocr_error) / ocr_total
 metrics = {'recall': recall,
