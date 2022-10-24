@@ -203,6 +203,6 @@ metrics = {'recall': recall,
            'ocr_missed': ocr_missed,
            'ocr_miss_rate': ocr_miss_rate,
            'ocr_normal': ocr_normal}
-jsonString = json.dumps(metrics, indent=0)
+json_metrics = json.dumps(metrics, indent=0)
 with open(args.metrics + '/metrics.json', 'w') as f:
-    f.write(jsonString)
+    f.write(json_metrics)
