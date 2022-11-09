@@ -1,0 +1,84 @@
+\documentclass{beamer}
+\usetheme{Dresden}
+\usecolortheme{beaver}
+\setbeamercolor{section in head/foot}{fg=white}
+\setbeamercolor{frametitle}{bg=black}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{graphicx}
+\title{Применение методов квантования к решению задачи оптимизации нейронных сетей}
+\author{Шлыков Илья}
+\date{2022}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+\frametitle{Введение}
+ Квантование нейронной сети - метод преобразования данных, который позволяет уменьшить размер модели и получить преимущество в скорости работы, при небольшой потери качества.
+\end{frame}
+
+\begin{frame}
+\frametitle{Симметричное равномерное квантование}
+Самым простым методом среди существующих можно считать метод симмметричного равномерного квантования. Для некоторых данных Х, которые изменяются в диапозоне (l,u) и некоторого значения среза $C \in (0,max(|l|,|u|))  $ симметричное квантование к int8 может быть сформированно как:  
+\begin{equation}
+    q = round(clip(x,c)/s)
+\end{equation}
+где $clip(x,c) = min(max(x,-c),c),s = 2*c/(2^{8}-1)$
+в свою очередь s это коэффициент масштабирования для проецирования чисел с запятой в 8-битное целое число. Деквантованые веса могут быть вычеслены как:  
+$x = q*s$
+\end{frame}
+
+\begin{frame}
+\frametitle{Аффинный квантователь}
+Более общим методом является метод аффинного квантователя, который отличается от предыдущего метода, тем что помимо параметра s, появляется новый параметр Z(zero-point), который имеет тот же тип, что и квантованные значения q, и является квантованным значением, соответствующим действительному значению 0. Таким образом гарантируется, что 0 будет представлен среди квантованных значений.После того как параметры определены, процесс квантования может быть представлен как:
+\begin{equation}
+    x_{int} = round({x \over s}) + Z
+\end{equation}
+\begin{equation}
+    q = clip(0,N_{levels}-1,x_{int})
+\end{equation}
+Деквантование: $x = (q - Z)*s$
+\end{frame}
+
+\begin{frame}{Стохастический квантователь}
+    Стохастическое квантование моделирует аддитивный шум, с последующим округлением. Задается следующим образом:
+    \begin{equation}
+        x_{int} = round({x + \epsilon \over S}) + Z, \epsilon ~ Unif(-1/2,1/2)   
+    \end{equation}
+    \begin{equation}
+    q = clip(0,N_{levels}-1,x_{int})
+    \end{equation}
+    Деквантование происходит аналогично деквантованию в аффинном квантователе
+\end{frame}
+
+\begin{frame}{Квантование во время обучения}
+При квантовании после обучения, есть вероятность сильно потерять в точности так как обучалась сеть с неквантованными значениями. Для того, чтобы повысить точность можно применить метод квантования во время обучения, за счет того, что сеть будет обучаться используя уже проквантованные веса.
+\end{frame}
+
+\begin{frame}{Learned step size quantization (LSQ)}
+LSQ метод основан на s масштабировании, но также использует градиент,который вычисляется используя straight through estimator(STE), для корректировки размера шага.  
+$$y = w_q*x + b $$
+$$w_q = [w/s]*s $$
+$$\delta y/\delta s = {\delta y \over \delta w_q}*{\delta w_q \over \delta s}$$  
+$${\delta w_q \over \delta s} = s \delta/\delta s ([w/s]) + [w/s] $$
+Так как функция [w/s] не дифференцируемая  используем STE  
+$$\delta/\delta s ([w/s]) = \delta /\delta s (w/s) = -w/s^2$$
+\end{frame}
+\begin{frame}{Learned step size quantization (LSQ)}
+Итоговый результат:  
+\begin{equation}
+{\delta w_q \over \delta s} = 
+\begin{cases}
+    -w/s + [w/s] \ \ if  \ -Q_N < w/s <Q_P
+    \\
+    -Q_N \ \ if \ \ w/s < -Q_N
+    \\
+    Q_P \ \ if \ \ w/s  > Q_P
+    \end{cases}
+\end{equation} 
+Корректировка весов будет выглядеть следующим образом:
+$$w_{float} = w_{float} - \mu \delta L/\delta w_{out}*I_{w_{out}} \in (w_{min},w_{max})$$
+\end{frame}
+\end{document}
