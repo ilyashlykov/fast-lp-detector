@@ -1,0 +1,43 @@
+{
+    "input_names": ["x"],
+    "output_names": [
+        "model/conv12/BiasAdd"
+    ],
+    "input_channel_order": "BGR",
+    "input_format": "FLOAT_MEAN_SIGMA",
+    "output_format": "SQUEEZEDET",
+    "anchors": {
+        "width": 18,
+        "height": 5,
+        "sizes_wh": [
+            [
+                32.0,
+                33.0
+            ],
+            [
+                26.0,
+                54.0
+            ],
+            [
+                15.0,
+                34.0
+            ],
+            [
+                64.0,
+                65.0
+            ],
+            [
+                48.0,
+                50.0
+            ],
+            [
+                32.0,
+                70.0
+            ]
+        ],
+        "num_classes": 23,
+        "classes": [
+			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+			"A", "B", "C", "D", "E", "H", "K", "M", "O", "P", "T", "X", "Y"]
+    }
+}

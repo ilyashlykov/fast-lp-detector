@@ -1,0 +1,54 @@
+{
+    "input_names": ["x"],
+    "output_names": [
+        "model/conv12/BiasAdd"
+    ],
+    "input_channel_order": "BGR",
+    "input_format": "FLOAT_MEAN_SIGMA",
+    "output_format": "SQUEEZEDET",
+    "anchors": {
+        "width": 9,
+        "height": 3,
+        "sizes_wh": [
+            [
+                80.0,
+                25.0
+            ],
+            [
+                122.0,
+                35.0
+            ],
+            [
+                110.0,
+                30.0
+            ],
+            [
+                180.0,
+                40.0
+            ],
+            [
+                145.0,
+                45.0
+            ],
+            [
+                166.0,
+                45.0
+            ],
+            [
+                200.0,
+                55.0
+            ],
+            [
+                245.0,
+                60.0
+            ],
+            [
+                124.0,
+                42.0
+            ]
+        ],
+        "num_classes": 11,
+        "classes": [ "civil(2_in_region)", "civil(3_in_region)", "bus", "trailer", "military", 
+        "special&bike(twolines)", "transit(archive)", "diplomatic(consul)", "diplomatic(stuff)", "transit", "police"]
+    }
+}
